@@ -163,6 +163,34 @@ def login():
         }
     }), 200
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    required_fields = ['nome', 'email', 'cpf', 'telefone', 'data_nascimento', 'password', 'tipo']
+
+    # Verifica se todos os campos obrigatórios estão presentes
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({'erro': f'Campo {field} é obrigatório'}), 400
+
+    # Verifica se email já está cadastrado
+    if db.usuario.find_one({ "email": data['email'] }):
+        return jsonify({'erro': 'E-mail já cadastrado'}), 409
+
+    # Salva o novo usuário
+    db.usuario.insert_one({
+        "nome": data['nome'],
+        "email": data['email'],
+        "cpf": data['cpf'],
+        "telefone": data['telefone'],
+        "data_nascimento": data['data_nascimento'],
+        "password": data['password'],
+        "tipo": data.get('tipo', 'usuario')
+    })
+
+    return jsonify({'mensagem': 'Usuário cadastrado com sucesso'}), 201
+
+
 
 
 

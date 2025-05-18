@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+// Páginas
 import Login from '@/components/Login.vue'
 import Register from '@/components/Register.vue'
 import CarList from '@/components/CarList.vue'
@@ -10,23 +12,57 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', component: Login, redirect: '/login' },
-    { path: '/login', component: Login },
-    { path: '/register', component: Register },
-    { path: '/carros', component: CarList },
-    { path: '/novo', component: CarForm },
-    { path: '/editar/:id', component: CarForm },
-    { path: '*', redirect: '/login' }
+    {
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/register',
+      component: Register
+    },
+    {
+      path: '/carros',
+      component: CarList,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/novo',
+      component: CarForm,
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/editar/:id',
+      component: CarForm,
+      props: true,
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '*',
+      redirect: '/login'
+    }
   ]
 })
 
+// Proteção das rotas
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
-    next('/login')
-  } else {
-    next()
+  const tipo = localStorage.getItem('tipo')
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+      return next('/login')
+    }
+
+    if (to.matched.some(record => record.meta.requiresAdmin) && tipo !== 'admin') {
+      return next('/carros') // redireciona usuários comuns
+    }
   }
+
+  next()
 })
 
 export default router

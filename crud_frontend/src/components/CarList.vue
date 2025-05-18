@@ -1,10 +1,15 @@
 <template>
   <div>
-    <!-- Navbar -->
     <b-navbar type="light" variant="light" class="shadow-sm">
       <b-navbar-brand>Carros</b-navbar-brand>
       <b-navbar-nav class="ml-auto">
-        <b-button size="sm" variant="success" class="mr-2" @click="$router.push('/novo')">
+        <b-button
+          v-if="isAdmin"
+          size="sm"
+          variant="success"
+          class="mr-2"
+          @click="$router.push('/novo')"
+        >
           Novo Anúncio
         </b-button>
         <b-button size="sm" variant="outline-danger" @click="logout">
@@ -19,7 +24,7 @@
       <b-row>
         <b-col
           v-for="carro in carros"
-          :key="carro._id"
+          :key="carro._id.$oid"
           cols="12"
           sm="6"
           md="4"
@@ -45,27 +50,28 @@
                 R$ {{ formatPrice(carro.preco) }}
               </h5>
               <p class="mb-2">
-                <small>
-                  {{ carro.ano }} • {{ formatKm(carro.km) }}
-                </small>
+                <small>{{ carro.ano }} • {{ formatKm(carro.km) }}</small>
               </p>
-              <b-button
-                size="sm"
-                variant="outline-primary"
-                block
-                class="mb-2"
-                @click="$router.push(`/editar/${carro._id}`)"
-              >
-                Editar
-              </b-button>
-              <b-button
-                size="sm"
-                variant="outline-danger"
-                block
-                @click="remove(carro._id)"
-              >
-                Excluir
-              </b-button>
+
+              <div v-if="isAdmin">
+                <b-button
+                  size="sm"
+                  variant="outline-primary"
+                  block
+                  class="mb-2"
+                  @click="$router.push(`/editar/${carro._id.$oid}`)"
+                >
+                  Editar
+                </b-button>
+                <b-button
+                  size="sm"
+                  variant="outline-danger"
+                  block
+                  @click="remove(carro._id.$oid)"
+                >
+                  Excluir
+                </b-button>
+              </div>
             </div>
           </b-card>
         </b-col>
@@ -86,6 +92,11 @@ export default {
   data() {
     return {
       carros: []
+    }
+  },
+  computed: {
+    isAdmin() {
+      return localStorage.getItem('tipo') === 'admin'
     }
   },
   async created() {
@@ -116,7 +127,7 @@ export default {
       if (!confirm('Deseja realmente excluir este anúncio?')) return
       try {
         await CarService.delete(id)
-        this.carros = this.carros.filter(c => c._id !== id)
+        this.carros = this.carros.filter(c => c._id.$oid !== id)
       } catch (err) {
         console.error('Erro ao excluir:', err)
         this.$bvToast.toast('Erro ao excluir anúncio', {
@@ -140,7 +151,6 @@ export default {
   flex-direction: column;
 }
 
-/* Imagem com tamanho fixo e responsivo */
 .card-img {
   width: 100%;
   height: 180px;
