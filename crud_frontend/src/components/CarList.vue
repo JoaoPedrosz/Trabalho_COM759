@@ -1,8 +1,12 @@
 <template>
   <div>
+    <!-- Navbar -->
     <b-navbar type="light" variant="light" class="shadow-sm">
       <b-navbar-brand>Carros</b-navbar-brand>
       <b-navbar-nav class="ml-auto">
+        <b-button size="sm" variant="success" class="mr-2" @click="$router.push('/novo')">
+          Novo Anúncio
+        </b-button>
         <b-button size="sm" variant="outline-danger" @click="logout">
           Sair
         </b-button>
@@ -16,7 +20,10 @@
         <b-col
           v-for="carro in carros"
           :key="carro._id"
-          cols="12" sm="6" md="4" lg="3"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
           class="d-flex align-stretch mb-4"
         >
           <b-card class="w-100 d-flex flex-column">
@@ -24,8 +31,7 @@
               v-if="carro.imagem"
               :src="carro.imagem"
               alt="Imagem do carro"
-              fluid
-              class="mb-3"
+              class="mb-3 card-img"
             />
             <div v-else class="mb-3 text-center text-muted">
               <small>Sem imagem disponível</small>
@@ -39,29 +45,27 @@
                 R$ {{ formatPrice(carro.preco) }}
               </h5>
               <p class="mb-2">
-                <small>{{ carro.ano }} • {{ formatKm(carro.km) }}</small>
+                <small>
+                  {{ carro.ano }} • {{ formatKm(carro.km) }}
+                </small>
               </p>
-
-              <div v-if="isAdmin">
-                <b-button
-                  size="sm"
-                  variant="outline-primary"
-                  class="mb-2"
-                  block
-                  @click="edit(carro._id)"
-                >
-                  Editar
-                </b-button>
-
-                <b-button
-                  size="sm"
-                  variant="outline-danger"
-                  block
-                  @click="remove(carro._id)"
-                >
-                  Excluir
-                </b-button>
-              </div>
+              <b-button
+                size="sm"
+                variant="outline-primary"
+                block
+                class="mb-2"
+                @click="$router.push(`/editar/${carro._id}`)"
+              >
+                Editar
+              </b-button>
+              <b-button
+                size="sm"
+                variant="outline-danger"
+                block
+                @click="remove(carro._id)"
+              >
+                Excluir
+              </b-button>
             </div>
           </b-card>
         </b-col>
@@ -81,19 +85,13 @@ export default {
   name: 'CarList',
   data() {
     return {
-      carros: [],
-      isAdmin: false
+      carros: []
     }
   },
   async created() {
-    this.checkRole()
     await this.loadCars()
   },
   methods: {
-    checkRole() {
-      const user = JSON.parse(localStorage.getItem('user'))
-      this.isAdmin = user && user.tipo === 'admin'
-    },
     async loadCars() {
       try {
         const res = await CarService.getAll()
@@ -114,9 +112,6 @@ export default {
         ? '0 km'
         : kmNumber.toLocaleString('pt-BR') + ' km'
     },
-    edit(id) {
-      this.$router.push(`/editar/${id}`)
-    },
     async remove(id) {
       if (!confirm('Deseja realmente excluir este anúncio?')) return
       try {
@@ -131,7 +126,8 @@ export default {
       }
     },
     logout() {
-      localStorage.clear()
+      localStorage.removeItem('token')
+      localStorage.removeItem('tipo')
       this.$router.push('/login')
     }
   }
@@ -142,5 +138,12 @@ export default {
 .b-card {
   display: flex;
   flex-direction: column;
+}
+
+/* Imagem com tamanho fixo e responsivo */
+.card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
 }
 </style>
