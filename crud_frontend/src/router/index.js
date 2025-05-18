@@ -1,46 +1,32 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import VueResource from 'vue-resource'
-// import HelloWorld from '@/components/HelloWorld'
-import Create from '../components/Create.vue'
-import Update from '../components/Update.vue'
-import List from '../components/List.vue'
-import Delete from '../components/Delete.vue'
+import Login from '@/components/Login.vue'
+import CarList from '@/components/CarList.vue'
+import CarForm from '@/components/CarForm.vue'
+import Register from '@/components/Register.vue'
 
 Vue.use(Router)
-Vue.use(VueResource)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'HelloWorld',
-    //   component: HelloWorld
-    // },
-    {
-      path: '/create',
-      name: 'create',
-      component: Create
-    },
-    {
-      path: '/update',
-      name: 'update',
-      component: Update
-    },
-    {
-      path: '/list',
-      name: 'list',
-      component: List
-    },
-    {
-      path: '/delete',
-      name: 'delete',
-      component: Delete
-    },
-    {
-      path: '/',
-      component: List
-    }
+    { path: '/', redirect: '/login' },
+    { path: '/login', component: Login },
+    { path: '/carros', component: CarList },
+    { path: '/novo', component: CarForm },
+    { path: '/editar/:id', component: CarForm, meta: { requiresAuth: true } },
+    { path: '/register', component: Register },
+    { path: '*', redirect: '/login' }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+export default router

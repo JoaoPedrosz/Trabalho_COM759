@@ -1,42 +1,56 @@
-from flask import json, request, jsonify
-import flask
+import json
+from flask import request, jsonify
 from bson import json_util
-from app import app
-from app import db
 from bson.objectid import ObjectId
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return flask.jsonify(json.loads(json_util.dumps(db.usuario.find({}).sort("_id", 1))))
+from app import app, db
 
-@app.route('/create', methods=['POST'])
-def create():
-    json_data = request.json
-    if json_data is not None:
-        db.usuario.insert_one(json_data)
-        return jsonify(mensagem='usuario criado')
-    else:
-        return jsonify(mensagem='usuario não criado')
+# ─── LISTAR TODOS OS CARROS ───────────────────────────────────────────────
+@app.route("/carros", methods=["GET"])
+def listar_carros():
+    cursor = db.carros.find().sort("_id", 1)
+    carros = json.loads(json_util.dumps(cursor))
+    return jsonify(carros), 200
 
-@app.route("/getid/<string:userId>")
-def getid(userId):
-    usuario = db.usuario.find_one({"_id": ObjectId(userId)})
-    return flask.jsonify(json.loads(json_util.dumps(usuario)))
 
-@app.route("/delete/<string:userId>")
-def delete(userId):
-    result = db.usuario.delete_one({"_id": ObjectId(userId)})
-    if(result.deleted_count > 0):
-        return jsonify(mensagem='usuario removido')
-    else:
-        return jsonify(mensagem='usuario não removido')
+# ─── OBTER CARRO POR ID ───────────────────────────────────────────────────
+@app.route("/carros/<string:carro_id>", methods=["GET"])
+def get_carro(carro_id):
+    carro = db.carros.find_one({"_id": ObjectId(carro_id)})
+    if not carro:
+        return jsonify({"erro": "Carro não encontrado"}), 404
+    return jsonify(json.loads(json_util.dumps(carro))), 200
 
-@app.route('/update', methods=['POST'])
-def update():
-    json_data = request.json
-    if json_data is not None and db.usuario.find_one({"_id": ObjectId(json_data["id"])}) is not None:
-        db.usuario.update_one({'_id': ObjectId(json_data["id"])}, {"$set": {'nome': json_data["nome"], 'email': json_data["email"],'idade': json_data["idade"]}})
-        return jsonify(mensagem='usuario atualizado')
-    else:
-        return jsonify(mensagem='usuario não atualizado')
+
+# ─── CRIAR NOVO CARRO ────────────────────────────────────────────────────
+@app.route("/carros", methods=["POST"])
+def criar_carro():
+    dados = request.json
+    # aqui pode validar campos obrigatórios, ex: nome, marca, preco...
+    result = db.carros.insert_one(dados)
+    return jsonify({
+        "mensagem": "Carro criado com sucesso",
+        "id": str(result.inserted_id)
+    }), 201
+
+
+# ─── ATUALIZAR CARRO EXISTENTE ────────────────────────────────────────────
+@app.route("/carros/<string:carro_id>", methods=["PUT"])
+def atualizar_carro(carro_id):
+    dados = request.json
+    resultado = db.carros.update_one(
+        {"_id": ObjectId(carro_id)},
+        {"$set": dados}
+    )
+    if resultado.matched_count == 0:
+        return jsonify({"erro": "Carro não encontrado"}), 404
+    return jsonify({"mensagem": "Carro atualizado com sucesso"}), 200
+
+
+# ─── DELETAR CARRO ────────────────────────────────────────────────────────
+@app.route("/carros/<string:carro_id>", methods=["DELETE"])
+def deletar_carro(carro_id):
+    resultado = db.carros.delete_one({"_id": ObjectId(carro_id)})
+    if resultado.deleted_count == 0:
+        return jsonify({"erro": "Carro não encontrado"}), 404
+    return jsonify({"mensagem": "Carro removido com sucesso"}), 200

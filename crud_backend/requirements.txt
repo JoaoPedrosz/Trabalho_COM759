@@ -12,3 +12,4 @@ pymongo==4.7.2
 python-dotenv==1.0.1
 six==1.16.0           
 Werkzeug==3.0.2
+dnspython==2.6.1
