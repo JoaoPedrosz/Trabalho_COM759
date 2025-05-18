@@ -2,10 +2,7 @@
 <template>
   <b-row class="vh-100 vw-100 no-gutters">
     <!-- Coluna do formulário -->
-    <b-col
-      sm="5"
-      class="left-login d-flex justify-content-center align-items-center"
-    >
+    <b-col sm="5" class="left-login d-flex justify-content-center align-items-center">
       <div class="form-container">
         <h2 class="text-center mb-4 title-login">Faça o login</h2>
         <b-form @submit.prevent="login">
@@ -36,12 +33,7 @@
 
           <hr />
 
-          <b-button
-            type="button"
-            variant="outline-secondary"
-            block
-            @click="goToRegister"
-          >
+          <b-button type="button" variant="outline-secondary" block @click="goToRegister">
             <i class="fas fa-user-plus mr-2"></i>Não tenho conta
           </b-button>
         </b-form>
@@ -51,15 +43,8 @@
     </b-col>
 
     <!-- Coluna da ilustração -->
-    <b-col
-      sm="7"
-      class="side-login d-flex justify-content-center align-items-center"
-    >
-      <img
-        :src="loginIllustration"
-        class="img-login"
-        alt="Login Illustration"
-      />
+    <b-col sm="7" class="side-login d-flex justify-content-center align-items-center">
+      <img :src="loginIllustration" class="img-login" alt="Login Illustration" />
     </b-col>
   </b-row>
 </template>
@@ -96,7 +81,12 @@ export default {
 
       try {
         const res = await UserService.login(this.form.email, this.form.password)
+
+        // ✅ Salva token e tipo do usuário no localStorage
         localStorage.setItem('token', res.data.access_token)
+        localStorage.setItem('tipo', res.data.user.tipo) // ← campo aninhado corretamente
+        localStorage.setItem('email', res.data.user.email)
+
         this.$router.push('/carros')
       } catch (err) {
         this.erro = 'Usuário ou senha inválidos'

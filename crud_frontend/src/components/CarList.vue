@@ -1,29 +1,74 @@
 <template>
-  <div class="car-list">
-    <h2 class="title">Recomendados para você</h2>
-    <div class="grid">
-      <div
-        v-for="car in cars"
-        :key="car._id"
-        class="card"
-        @click="$router.push(`/editar/${car._id}`)"
-      >
-        <div class="card-img">
-          <img :src="car.imagem" alt="Foto do carro" />
-        </div>
-        <div class="card-body">
-          <h3 class="card-modelo">{{ car.marca }} {{ car.modelo }}</h3>
-          <p class="card-descricao">{{ car.descricao }}</p>
-          <div class="card-preco">
-            R$ {{ car.preco.toFixed(2).replace('.', ',') }}
-          </div>
-          <div class="card-detalhes">
-            <span>{{ car.ano }}</span> • <span>{{ car.km }} km</span>
-          </div>
-          <div class="card-local">
-            <i class="fas fa-map-marker-alt"></i> {{ car.local }}
-          </div>
-        </div>
+  <div>
+    <b-navbar type="light" variant="light" class="shadow-sm">
+      <b-navbar-brand>Carros</b-navbar-brand>
+      <b-navbar-nav class="ml-auto">
+        <b-button size="sm" variant="outline-danger" @click="logout">
+          Sair
+        </b-button>
+      </b-navbar-nav>
+    </b-navbar>
+
+    <div class="container mt-4">
+      <h2 class="mb-4">Recomendados para você</h2>
+
+      <b-row>
+        <b-col
+          v-for="carro in carros"
+          :key="carro._id"
+          cols="12" sm="6" md="4" lg="3"
+          class="d-flex align-stretch mb-4"
+        >
+          <b-card class="w-100 d-flex flex-column">
+            <b-img
+              v-if="carro.imagem"
+              :src="carro.imagem"
+              alt="Imagem do carro"
+              fluid
+              class="mb-3"
+            />
+            <div v-else class="mb-3 text-center text-muted">
+              <small>Sem imagem disponível</small>
+            </div>
+
+            <b-card-title class="mb-1">{{ carro.modelo }}</b-card-title>
+            <small class="text-muted mb-2">{{ carro.cidade }}</small>
+
+            <div class="mt-auto">
+              <h5 class="text-primary mb-2">
+                R$ {{ formatPrice(carro.preco) }}
+              </h5>
+              <p class="mb-2">
+                <small>{{ carro.ano }} • {{ formatKm(carro.km) }}</small>
+              </p>
+
+              <div v-if="isAdmin">
+                <b-button
+                  size="sm"
+                  variant="outline-primary"
+                  class="mb-2"
+                  block
+                  @click="edit(carro._id)"
+                >
+                  Editar
+                </b-button>
+
+                <b-button
+                  size="sm"
+                  variant="outline-danger"
+                  block
+                  @click="remove(carro._id)"
+                >
+                  Excluir
+                </b-button>
+              </div>
+            </div>
+          </b-card>
+        </b-col>
+      </b-row>
+
+      <div v-if="!carros.length" class="text-center text-muted">
+        Nenhum anúncio encontrado.
       </div>
     </div>
   </div>
@@ -36,92 +81,66 @@ export default {
   name: 'CarList',
   data() {
     return {
-      cars: []
+      carros: [],
+      isAdmin: false
     }
   },
   async created() {
-    try {
-      const res = await CarService.getAll() // GET /carros
-      this.cars = res.data
-    } catch (e) {
-      console.error('Não foi possível carregar os carros', e)
+    this.checkRole()
+    await this.loadCars()
+  },
+  methods: {
+    checkRole() {
+      const user = JSON.parse(localStorage.getItem('user'))
+      this.isAdmin = user && user.tipo === 'admin'
+    },
+    async loadCars() {
+      try {
+        const res = await CarService.getAll()
+        this.carros = res.data
+      } catch (err) {
+        console.error('Erro ao carregar carros:', err)
+      }
+    },
+    formatPrice(value) {
+      const preco = Number(value)
+      return isNaN(preco)
+        ? '0,00'
+        : preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+    },
+    formatKm(km) {
+      const kmNumber = Number(km)
+      return isNaN(kmNumber)
+        ? '0 km'
+        : kmNumber.toLocaleString('pt-BR') + ' km'
+    },
+    edit(id) {
+      this.$router.push(`/editar/${id}`)
+    },
+    async remove(id) {
+      if (!confirm('Deseja realmente excluir este anúncio?')) return
+      try {
+        await CarService.delete(id)
+        this.carros = this.carros.filter(c => c._id !== id)
+      } catch (err) {
+        console.error('Erro ao excluir:', err)
+        this.$bvToast.toast('Erro ao excluir anúncio', {
+          variant: 'danger',
+          solid: true
+        })
+      }
+    },
+    logout() {
+      localStorage.clear()
+      this.$router.push('/login')
     }
   }
 }
 </script>
 
 <style scoped>
-.car-list {
-  padding: 1rem;
-}
-.car-list .title {
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
-}
-.card {
-  background: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  overflow: hidden;
-  cursor: pointer;
+.b-card {
   display: flex;
   flex-direction: column;
-  transition: transform .15s;
-}
-.card:hover {
-  transform: translateY(-4px);
-}
-.card-img {
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-  background: #f5f5f5;
-}
-.card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.card-body {
-  padding: 0.75rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.card-modelo {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-.card-descricao {
-  margin: 0.25rem 0 0.75rem;
-  font-size: 0.85rem;
-  color: #666;
-  flex: 1;
-}
-.card-preco {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-.card-detalhes {
-  font-size: 0.8rem;
-  color: #888;
-  margin-bottom: 0.5rem;
-}
-.card-local {
-  font-size: 0.8rem;
-  color: #888;
-  display: flex;
-  align-items: center;
-}
-.card-local i {
-  margin-right: 0.25rem;
 }
 </style>

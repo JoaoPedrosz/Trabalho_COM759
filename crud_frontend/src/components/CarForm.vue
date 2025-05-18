@@ -1,11 +1,7 @@
 <!-- src/components/CarForm.vue -->
 <template>
   <b-row class="vh-100 vw-100 no-gutters">
-    <!-- Coluna do formulário -->
-    <b-col
-      sm="5"
-      class="left-form d-flex justify-content-center align-items-center"
-    >
+    <b-col sm="5" class="left-form d-flex justify-content-center align-items-center">
       <div class="form-container">
         <h2 class="text-center mb-4">
           {{ isEdit ? 'Editar Anúncio' : 'Novo Anúncio de Carro' }}
@@ -13,162 +9,91 @@
         <b-form @submit.prevent="submitForm">
           <!-- Modelo -->
           <b-form-group label="Modelo" label-for="modelo">
-            <b-form-input
-              id="modelo"
-              v-model.trim="$v.form.modelo.$model"
-              :state="validationState('modelo')"
-              placeholder="Ex: Volkswagen Up"
-              required
-            />
-            <b-form-invalid-feedback>
-              Modelo é obrigatório
-            </b-form-invalid-feedback>
+            <b-form-input id="modelo" v-model.trim="$v.form.modelo.$model" :state="validationState('modelo')" placeholder="Ex: Volkswagen Up" required />
+            <b-form-invalid-feedback>Modelo é obrigatório</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Cidade -->
           <b-form-group label="Cidade" label-for="cidade">
-            <b-form-input
-              id="cidade"
-              v-model.trim="$v.form.cidade.$model"
-              :state="validationState('cidade')"
-              placeholder="Ex: Belo Horizonte - MG"
-              required
-            />
-            <b-form-invalid-feedback>
-              Cidade é obrigatória
-            </b-form-invalid-feedback>
+            <b-form-input id="cidade" v-model.trim="$v.form.cidade.$model" :state="validationState('cidade')" placeholder="Ex: Belo Horizonte - MG" required />
+            <b-form-invalid-feedback>Cidade é obrigatória</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Ano -->
           <b-form-group label="Ano" label-for="ano">
-            <b-form-input
-              id="ano"
-              v-model.trim="$v.form.ano.$model"
-              :state="validationState('ano')"
-              type="number"
-              placeholder="Ex: 2020"
-              required
-            />
-            <b-form-invalid-feedback>
-              Ano é obrigatório
-            </b-form-invalid-feedback>
+            <b-form-input id="ano" v-model.trim="$v.form.ano.$model" :state="validationState('ano')" type="number" placeholder="Ex: 2020" required />
+            <b-form-invalid-feedback>Ano é obrigatório</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- KM -->
           <b-form-group label="KM" label-for="km">
-            <b-form-input
-              id="km"
-              v-model.trim="$v.form.km.$model"
-              :state="validationState('km')"
-              type="number"
-              placeholder="Ex: 45000"
-              required
-            />
-            <b-form-invalid-feedback>
-              KM é obrigatório
-            </b-form-invalid-feedback>
+            <b-form-input id="km" v-model.trim="$v.form.km.$model" :state="validationState('km')" type="number" placeholder="Ex: 45000" required />
+            <b-form-invalid-feedback>KM é obrigatório</b-form-invalid-feedback>
+          </b-form-group>
+
+          <!-- Preço -->
+          <b-form-group label="Preco (R$)" label-for="preco">
+            <b-form-input id="preco" v-model.trim="$v.form.preco.$model" :state="validationState('preco')" type="number" placeholder="Ex: 65000" required />
+            <b-form-invalid-feedback>Preço é obrigatório</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Câmbio -->
           <b-form-group label="Câmbio" label-for="cambio">
-            <b-form-select
-              id="cambio"
-              v-model="$v.form.cambio.$model"
-              :options="optionsCambio"
-              :state="validationState('cambio')"
-              required
-            />
-            <b-form-invalid-feedback>
-              Selecione o câmbio
-            </b-form-invalid-feedback>
+            <b-form-select id="cambio" v-model="$v.form.cambio.$model" :options="optionsCambio" :state="validationState('cambio')" required />
+            <b-form-invalid-feedback>Selecione o câmbio</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Carroceria -->
           <b-form-group label="Carroceria" label-for="carroceria">
-            <b-form-select
-              id="carroceria"
-              v-model="$v.form.carroceria.$model"
-              :options="optionsCarroceria"
-              :state="validationState('carroceria')"
-              required
-            />
-            <b-form-invalid-feedback>
-              Selecione a carroceria
-            </b-form-invalid-feedback>
+            <b-form-select id="carroceria" v-model="$v.form.carroceria.$model" :options="optionsCarroceria" :state="validationState('carroceria')" required />
+            <b-form-invalid-feedback>Selecione a carroceria</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Cor -->
           <b-form-group label="Cor" label-for="cor">
-            <b-form-select
-              id="cor"
-              v-model="$v.form.cor.$model"
-              :options="optionsCor"
-              :state="validationState('cor')"
-              required
-            />
-            <b-form-invalid-feedback>
-              Selecione a cor
-            </b-form-invalid-feedback>
+            <b-form-select id="cor" v-model="$v.form.cor.$model" :options="optionsCor" :state="validationState('cor')" required />
+            <b-form-invalid-feedback>Selecione a cor</b-form-invalid-feedback>
           </b-form-group>
 
           <!-- Combustível -->
           <b-form-group label="Combustível" label-for="combustivel">
-            <b-form-select
-              id="combustivel"
-              v-model="$v.form.combustivel.$model"
-              :options="optionsCombustivel"
-              :state="validationState('combustivel')"
-              required
-            />
-            <b-form-invalid-feedback>
-              Selecione o combustível
-            </b-form-invalid-feedback>
+            <b-form-select id="combustivel" v-model="$v.form.combustivel.$model" :options="optionsCombustivel" :state="validationState('combustivel')" required />
+            <b-form-invalid-feedback>Selecione o combustível</b-form-invalid-feedback>
           </b-form-group>
 
-          <!-- Botões -->
+          <!-- Imagem -->
+          <b-form-group label="Imagem do Carro" label-for="imagem">
+            <b-form-file id="imagem" accept="image/*" @change="onFileChange" :state="fileState" />
+            <b-form-invalid-feedback>Selecione uma imagem válida</b-form-invalid-feedback>
+            <b-img v-if="preview" :src="preview" fluid class="mt-2" alt="Preview da Imagem" />
+          </b-form-group>
+
           <b-button type="submit" variant="primary" block>
-            <i class="fas fa-save mr-2"></i>
-            {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
+            <i class="fas fa-save mr-2"></i> {{ isEdit ? 'Atualizar' : 'Cadastrar' }}
           </b-button>
 
           <hr />
-
-          <b-button
-            type="button"
-            variant="outline-secondary"
-            block
-            @click="cancel"
-          >
-            ← Voltar
-          </b-button>
-
+          <b-button type="button" variant="outline-secondary" block @click="cancel">← Voltar</b-button>
           <p v-if="erro" class="text-danger mt-2">{{ erro }}</p>
         </b-form>
       </div>
     </b-col>
 
-    <!-- Coluna da ilustração -->
-    <b-col
-      sm="7"
-      class="side-form d-flex justify-content-center align-items-center"
-    >
-      <!-- aqui você pode colocar uma imagem de fundo ou ilustração -->
-      <img
-        :src="illustration"
-        class="img-illustration"
-        alt="Illustration"
-      />
+    <b-col sm="7" class="side-form d-flex justify-content-center align-items-center">
+      <img :src="illustration" class="img-illustration" alt="Illustration" />
     </b-col>
   </b-row>
 </template>
 
 <script>
 import { required, minLength, numeric } from 'vuelidate/lib/validators'
-import CarService from '@/services/CarService'  // seu serviço de API
+import { validationMixin } from 'vuelidate'
+import CarService from '@/services/CarService'
+import carIllustration from '@/assets/car.svg'
 
 export default {
   name: 'CarForm',
-
+  mixins: [validationMixin], // <- necessário para $v funcionar
   data() {
     return {
       form: {
@@ -176,22 +101,25 @@ export default {
         cidade: '',
         ano: null,
         km: null,
+        preco: null,
         cambio: '',
         carroceria: '',
         cor: '',
-        combustivel: ''
+        combustivel: '',
+        imagem: null
       },
       isEdit: false,
       erro: null,
+      preview: null,
       optionsCambio: [
         { value: 'Manual', text: 'Manual' },
         { value: 'Automático', text: 'Automático' }
       ],
       optionsCarroceria: [
         { value: 'Hatchback', text: 'Hatchback' },
-        { value: 'Sedan',      text: 'Sedan' },
-        { value: 'SUV',        text: 'SUV' },
-        { value: 'Picape',     text: 'Picape' }
+        { value: 'Sedan', text: 'Sedan' },
+        { value: 'SUV', text: 'SUV' },
+        { value: 'Picape', text: 'Picape' }
       ],
       optionsCor: [
         { value: 'Prata', text: 'Prata' },
@@ -200,28 +128,27 @@ export default {
         { value: 'Vermelho', text: 'Vermelho' }
       ],
       optionsCombustivel: [
-        { value: 'Gasolina',  text: 'Gasolina' },
-        { value: 'Álcool',    text: 'Álcool' },
-        { value: 'Diesel',    text: 'Diesel' },
-        { value: 'Flex',      text: 'Flex' }
+        { value: 'Gasolina', text: 'Gasolina' },
+        { value: 'Álcool', text: 'Álcool' },
+        { value: 'Diesel', text: 'Diesel' },
+        { value: 'Flex', text: 'Flex' }
       ],
-      illustration: require('@/assets/car-illustration.svg') // sua SVG
+      illustration: carIllustration
     }
   },
-
   validations: {
     form: {
-      modelo:   { required, minLength: minLength(3) },
-      cidade:   { required, minLength: minLength(3) },
-      ano:      { required, numeric },
-      km:       { required, numeric },
-      cambio:   { required },
+      modelo: { required, minLength: minLength(3) },
+      cidade: { required, minLength: minLength(3) },
+      ano: { required, numeric },
+      km: { required, numeric },
+      preco: { required, numeric },
+      cambio: { required },
       carroceria: { required },
-      cor:      { required },
+      cor: { required },
       combustivel: { required }
     }
   },
-
   async created() {
     const id = this.$route.params.id
     if (id) {
@@ -229,54 +156,67 @@ export default {
       try {
         const res = await CarService.getById(id)
         this.form = res.data
-      } catch (e) {
+        this.preview = res.data.imagem || null
+      } catch (err) {
+        console.error(err)
         this.erro = 'Não foi possível carregar o anúncio'
       }
     }
   },
-
+  mounted() {
+    console.log('validação funcionando?', this.$v)
+  },
   methods: {
     validationState(field) {
       const f = this.$v.form[field]
       return f.$dirty ? !f.$error : null
     },
-
+    onFileChange(event) {
+      const file = event.target.files[0]
+      if (!file) {
+        this.preview = null
+        this.form.imagem = null
+        return
+      }
+      this.form.imagem = file
+      this.preview = URL.createObjectURL(file)
+    },
     async submitForm() {
       this.$v.$touch()
       if (this.$v.$error) return
 
+      const payload = new FormData()
+      Object.entries(this.form).forEach(([key, val]) => {
+        payload.append(key, val)
+      })
+
       try {
         if (this.isEdit) {
-          await CarService.update(this.$route.params.id, this.form)
+          await CarService.update(this.$route.params.id, payload, true)
         } else {
-          await CarService.create(this.form)
+          await CarService.create(payload, true)
         }
         this.$router.push('/carros')
-      } catch (e) {
+      } catch (err) {
+        console.error(err)
         this.erro = 'Erro ao salvar o anúncio'
       }
     },
-
     cancel() {
       this.$router.back()
+    }
+  },
+  computed: {
+    fileState() {
+      return this.form.imagem ? true : null
     }
   }
 }
 </script>
 
 <style scoped>
-.left-form {
-  background-color: #f8f9fa;
-}
-.side-form {
-  background-color: #e9ecef;
-}
-.form-container {
-  width: 80%;
-  max-width: 360px;
-}
-.img-illustration {
-  width: 80%;
-  max-width: 600px;
-}
+.left-form { background-color: #f8f9fa; }
+.side-form { background-color: #e9ecef; }
+.form-container { width: 80%; max-width: 360px; }
+.img-illustration { width: 80%; max-width: 600px; }
 </style>

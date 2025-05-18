@@ -1,21 +1,21 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login.vue'
+import Register from '@/components/Register.vue'
 import CarList from '@/components/CarList.vue'
 import CarForm from '@/components/CarForm.vue'
-import Register from '@/components/Register.vue'
 
 Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', redirect: '/login' },
+    { path: '/', component: Login, redirect: '/login' },
     { path: '/login', component: Login },
+    { path: '/register', component: Register },
     { path: '/carros', component: CarList },
     { path: '/novo', component: CarForm },
-    { path: '/editar/:id', component: CarForm, meta: { requiresAuth: true } },
-    { path: '/register', component: Register },
+    { path: '/editar/:id', component: CarForm },
     { path: '*', redirect: '/login' }
   ]
 })

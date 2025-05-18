@@ -1,23 +1,23 @@
-import axios from 'axios/dist/axios.min.js'
+import axios from 'axios'
 
 const api = axios.create({
   baseURL: 'http://localhost:5000'
 })
 
 export default {
-  register (form) {
-    return api.post('/create', {
+  register(form) {
+    return api.post('/register', {
       nome: form.name,
       email: form.email,
       cpf: form.cpf,
       telefone: form.telefone,
       data_nascimento: form.dataNascimento,
-      senha: form.password,
+      password: form.password,
       tipo: 'usuario'
     })
   },
 
-  login (email, senha) {
-    return api.post('/login', { email, senha })
+  login(email, password) {
+    return api.post('/login', { email, password })
   }
 }
