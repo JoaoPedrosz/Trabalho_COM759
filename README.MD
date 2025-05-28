@@ -93,22 +93,8 @@ Criar uma aplicação web completa com:
    SECRET_KEY=sua_chave_secreta
    MONGO_URI=sua_uri_mongodb
    ```
-
-5. Exporte a variável de ambiente `FLASK_APP`:
-   - No **Linux/macOS**:
-     ```bash
-     export FLASK_APP=run.py
-     ```
-   - No **Windows (CMD)**:
-     ```cmd
-     set FLASK_APP=run.py
-     ```
-   - No **Windows (PowerShell)**:
-     ```powershell
-     $env:FLASK_APP = "run.py"
-     ```
-
-6. Inicie o servidor:
+    
+5. Inicie o servidor:
    ```bash
    flask run
    ```
