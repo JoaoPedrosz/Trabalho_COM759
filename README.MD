@@ -1,3 +1,9 @@
+Admin: teste@carros.com
+Senha: abc123
+
+usuario teste:lucas@gmail.com
+senha: 123456
+
 # 🚗 Sistema de Gerenciamento de Carros
 
 Aplicação Web fullstack desenvolvida como **trabalho da disciplina Programação Avançada (FACAMP)**. O sistema permite o gerenciamento de carros com cadastro, edição, listagem e exclusão, além de autenticação de usuários.
