@@ -135,11 +135,4 @@ npm install
 npm run serve
 O frontend estará disponível em http://localhost:8080
 
-📌 Observações
-As imagens dos carros são salvas localmente na pasta static/uploads/.
 
-A autenticação ainda não possui criptografia de senha.
-
-As rotas protegidas redirecionam usuários comuns quando tentam acessar páginas administrativas.
-
-O token JWT é armazenado no localStorage.
