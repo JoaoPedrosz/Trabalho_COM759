@@ -122,10 +122,9 @@ pip install -r requirements.txt
 flask run
 O backend estará disponível em http://localhost:5000
 
-🔹 Frontend
-bash
-Copiar
-Editar
+### 🔹 Frontend
+
+```bash
 cd crud_frontend
 
 # Instalar dependências:
