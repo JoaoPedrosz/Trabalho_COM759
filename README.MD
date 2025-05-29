@@ -72,9 +72,7 @@ Criar uma aplicação web completa com:
 ├── run.py
 ├── requirements.txt
 
-shell
-Copiar
-Editar
+
 
 ### 📁 `crud_frontend/`
 
@@ -87,9 +85,7 @@ Editar
 │ └── main.js
 ├── static/
 
-yaml
-Copiar
-Editar
+
 
 ---
 
